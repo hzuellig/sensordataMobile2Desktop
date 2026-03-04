@@ -52,8 +52,8 @@ function draw() {
   orient.pitch = lerp(orient.pitch, targetPitch, 0.2);
   orient.roll = lerp(orient.roll, targetRoll, 0.2);
 
-  pg.rotateY(orient.yaw);
-  pg.rotateX(orient.pitch);
+  pg.rotateY(-orient.yaw);
+  pg.rotateX(-orient.pitch);
   pg.rotateZ(-orient.roll);
 
   
