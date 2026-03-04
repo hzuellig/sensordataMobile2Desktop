@@ -1,6 +1,7 @@
 let socket;
-let sensor = { beta: 0 };
+let sensor = { alpha: 0, beta: 0, gamma: 0 };
 let pg;
+let orient = { yaw: 0, pitch: 0, roll: 0 };
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -11,7 +12,11 @@ function setup() {
   socket = io();
 
   socket.on("sensorData", (data) => {
-    sensor = data;
+    sensor = {
+      alpha: Number.isFinite(data?.alpha) ? data.alpha : 0,
+      beta: Number.isFinite(data?.beta) ? data.beta : 0,
+      gamma: Number.isFinite(data?.gamma) ? data.gamma : 0
+    };
     console.log("received sensor data from mobile:", data);
   });
 }
@@ -36,9 +41,18 @@ function draw() {
   pg.stroke(255);
   pg.noFill();
   pg.push();
-  pg.rotateZ(radians(sensor.alpha));
-  pg.rotateX(radians(sensor.beta));
-  pg.rotateY(radians(sensor.gamma));
+
+  const targetYaw = radians(sensor.alpha);
+  const targetPitch = radians(sensor.beta);
+  const targetRoll = radians(sensor.gamma);
+
+  orient.yaw = lerpAngle(orient.yaw, targetYaw, 0.2);
+  orient.pitch = lerp(orient.pitch, targetPitch, 0.2);
+  orient.roll = lerp(orient.roll, targetRoll, 0.2);
+
+  pg.rotateX(TWO_PI-orient.roll);//gamma
+  pg.rotateY(orient.yaw);//alpha
+  pg.rotateZ(orient.pitch);//gamma
 
   
   pg.box(100, 5, 200);
@@ -48,6 +62,13 @@ function draw() {
   image(pg, -width / 2, -height / 2);
   drawAxis();
 
+}
+
+function lerpAngle(current, target, amount) {
+  let delta = target - current;
+  while (delta > PI) delta -= TWO_PI;
+  while (delta < -PI) delta += TWO_PI;
+  return current + delta * amount;
 }
 
 function drawAxis() {
