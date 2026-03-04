@@ -46,13 +46,14 @@ function draw() {
   const targetPitch = radians(sensor.beta);
   const targetRoll = radians(sensor.gamma);
 
+  //make it smooth
   orient.yaw = lerpAngle(orient.yaw, targetYaw, 0.2);
   orient.pitch = lerp(orient.pitch, targetPitch, 0.2);
   orient.roll = lerp(orient.roll, targetRoll, 0.2);
 
-  pg.rotateX(TWO_PI-orient.roll);//gamma
-  pg.rotateY(orient.yaw);//alpha
-  pg.rotateZ(orient.pitch);//gamma
+  pg.rotateY(orient.roll);//alpha, gruene achse
+  pg.rotateX(orient.pitch);//beta, rote achse
+  pg.rotateZ(orient.yaw);//gamma, blaue achse
 
   
   pg.box(100, 5, 200);

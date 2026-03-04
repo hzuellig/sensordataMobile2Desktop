@@ -9,6 +9,11 @@ Small teaching/demo boilerplate to stream orientation sensor data from a mobile 
 - Broadcasts data to other connected clients (desktop)
 - Renders the orientation on desktop in a simple 3D p5.js scene
 
+## Test
+* Desktop (Receiver) `https://sensordatamobile2desktop.onrender.com/desktop`
+* Mobile (Sender) `https://sensordatamobile2desktop.onrender.com/mobile`
+
+
 ## Tech stack
 
 - Node.js + Express
@@ -49,6 +54,8 @@ Small teaching/demo boilerplate to stream orientation sensor data from a mobile 
 - Mobile sender: `http://localhost:3000/mobile`
 
 If you want to use a real phone, open the server from your phone on the same network (use your computer's local IP instead of `localhost`).
+
+
 
 ## Sensor support behavior
 
