@@ -2,11 +2,16 @@ let socket;
 let sensor = { alpha: 0, beta: 0, gamma: 0 };
 let pg;
 let orient = { yaw: 0, pitch: 0, roll: 0 };
+let capture;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   pg = createGraphics(width, height, WEBGL);
   pg.setAttributes({ alpha: true });
+
+  capture = createCapture(VIDEO);
+  capture.size(640, 480);
+  capture.hide(); // Hide the default HTML element
 
   // Connect to the WebSocket server
   socket = io();
@@ -22,11 +27,7 @@ function setup() {
 }
 
 function draw() {
-  /*background(20);
-  fill(255);
-  ellipse(width/2, height/2, map(sensor.beta, -90, 90, 10, 300));
-*/
-
+ 
 
   // trick transparent background with webgl https://editor.p5js.org/micuat/sketches/qOAjrWJf9
   pg.background(0, 20)
@@ -35,11 +36,11 @@ function draw() {
 
   pg.camera(320, -240, 420,
     0, 0, 0,     // Look at the origin
-    0, 1, 0);    // Y-axis points upwards (keep the camera upright)
+    0, 1, 0);    // Y-axis points upwards in p5 !! (keep the camera upright)
 
   drawAxis(pg);
 
-  pg.stroke(255);
+  pg.noStroke()
   pg.noFill();
   pg.push();
 
@@ -52,12 +53,16 @@ function draw() {
   orient.pitch = lerp(orient.pitch, targetPitch, 0.2);
   orient.roll = lerp(orient.roll, targetRoll, 0.2);
 
+  /*---prov  data to test */
+  /* orient.yaw += 0.01;
+  orient.pitch += 0.005;
+  orient.roll += 0.002;*/
   pg.rotateY(orient.yaw);//green axis
   pg.rotateX(-orient.pitch);//red axis
   pg.rotateZ(orient.roll);//blue axis
 
-  
-  pg.box(100, 5, 200);
+  pg.texture(capture);
+  pg.box(960, 5, 720);
 
   pg.pop();
 
@@ -74,7 +79,7 @@ function lerpAngle(current, target, amount) {
 
 function drawAxis(target) {
   /*
-    p5 Axis
+    p5 Axis differs from the standard right-handed coordinate system used in 3D graphics. In p5.js:
     ~~~
     X-axis: Positive X points to the right. red
     Y-axis: Positive Y points downwards (towards the bottom of the screen). green
@@ -82,7 +87,7 @@ function drawAxis(target) {
   */
   // X-axis (Red)
   target.push();
-  target.strokeWeight(2);
+  target.strokeWeight(1);
 
   target.stroke(255, 0, 0);
   target.line(0, 0, 0, 200, 0, 0);  // X axis points right
